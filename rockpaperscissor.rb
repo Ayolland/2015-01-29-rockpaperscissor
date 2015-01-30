@@ -3,11 +3,12 @@ require 'pry'
 class Player
   
   attr_reader :name, :control
-  attr_accessor :hand, :matchpoints
+  attr_accessor :hand, :matchpoints, :hand_str
   
   def initialize(name,control)
     @name = name
     @hand = nil
+    @hand_str = ""
     @wins = 0
     @losses = 0  
     @control = control
@@ -18,12 +19,15 @@ class Player
     @hand = 0 if hand_name == 'ROCK' 
     @hand = 1 if hand_name == 'PAPER'
     @hand = 2 if (hand_name == 'SCISSOR')
-    @hand
+    hand_str = hand_name
   end
   
   def ai_random
     random_hand = Random.new
     @hand = random_hand.rand(3)
+    @hand_str = 'ROCK' if @hand == 0
+    @hand_str = 'PAPER' if @hand == 1
+    @hand_str = 'SCISSOR' if @hand == 2    
     @hand
   end
   
@@ -97,10 +101,10 @@ def bot_invalid?(test)
   test != "HUMAN" && test != "COMPUTER"
 end
 
-#writes 40 dashes
+#writes 60 dashes
 
 def d_line
-  puts "-" * 40
+  puts "-" * 60
 end
 
 #prompts human players for their hand as a string
@@ -120,8 +124,8 @@ def driver_human_set_hand(player)
     d_whoops
     hand = driver_ask_hand(player)
   end
-  player.hand = h
-  player.hand
+  player.hand_str = h
+  player.hand_str
 end
 
 #checks test against only valid inputs for driver_ask_hand
@@ -145,21 +149,26 @@ def driver
   puts p1.name + ": " + p1.control + " >VERSUS< " + p2.name + ": " + p2.control
   this_match = Match.new(p1,p2,length)
   d_line
+  
   p1.set_hand(driver_human_set_hand(p1)) if p1.control == "HUMAN"
-  puts p1.hand
+  p1.ai_random if p1.control == "COMPUTER"
   p2.set_hand(driver_human_set_hand(p2)) if p2.control == "HUMAN"
-  puts p2.hand
+  p2.ai_random if p2.control == "COMPUTER"
   d_line
+  puts p1.name + " plays " + p1.hand_str
+  puts p2.name + " plays " + p2.hand_str
   this_round = this_match.test_round_winner
   if this_round == nil
     puts "It's a draw!"
   else
     puts this_round.name + " wins this round!"
   end
+  
   d_line
   puts p1.name + ": " + p1.matchpoints.to_s
   puts p2.name + ": " + p2.matchpoints.to_s
   d_line
+  
   puts this_match.test_match_winner.name + " wins the match!" if this_match.test_match_winner != nil
   
   
