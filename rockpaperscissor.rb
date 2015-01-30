@@ -106,7 +106,7 @@ end
 def driver_ask_hand(player)
   puts player.name + ": select your hand! (ROCK, PAPER, OR SCISSOR)"
   hand = gets.chomp.upcase
-  hand = hand.chomp if hand == "SCISSORS"
+  hand = "SCISSOR" if hand == "SCISSORS"
   hand
 end
 
@@ -144,15 +144,15 @@ def driver
   this_match = Match.new(p1,p2,length)
   d_line
   p1.set_hand(driver_human_set_hand(p1)) if p1.control == "HUMAN"
-  #puts p1.hand
+  puts p1.hand
   p2.set_hand(driver_human_set_hand(p2)) if p2.control == "HUMAN"
-  #puts p2.hand
+  puts p2.hand
   d_line
   this_round = this_match.test_round_winner
   if this_round == nil
     puts "It's a draw!"
   else
-    puts this_round.name + "wins!"
+    puts this_round.name + " wins this round!"
   end
   d_line
   
