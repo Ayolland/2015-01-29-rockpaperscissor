@@ -59,10 +59,10 @@ class Player
 # sets @hand and @hand_str.
   
   def ai_random
-    random_hand_num = Random.new
-    @hand[0] = random_hand_num.rand(3)
+    r = Random.new
+    @hand[0] = r.rand(3)
+    @hand[1] = nil
     set_hand
-    @hand
   end
   
 end
@@ -225,7 +225,7 @@ def driver_ask_hand(player)
   puts player.name + ": select your hand! (ROCK, PAPER, OR SCISSOR)"
   player.hand[1] = gets.chomp.upcase
   player.hand[1] = "SCISSOR" if player.hand[1] == "SCISSORS"
-  player.hand
+  player.hand[1]
 end
 
 # Public: #driver_human_set_hand()
@@ -242,7 +242,7 @@ end
 
 def driver_human_set_hand(player)
   h = driver_ask_hand(player)
-  while hand_invalid?(h[1])
+  while hand_invalid?(h)
     d_whoops
     h = driver_ask_hand(player)
   end
