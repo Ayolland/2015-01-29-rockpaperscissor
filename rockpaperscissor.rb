@@ -24,7 +24,7 @@ class Player
   
   def initialize(name,control)
     @name = name
-    @hand = nil
+    @hand = [nil,nil]
     @hand_str = ""
     @control = control
     @matchpoints = 0
@@ -42,11 +42,10 @@ class Player
 # State Changes:
 # Sets @hand.
   
-  def set_hand(hand_name)
-    @hand = 0 if hand_name == 'ROCK' 
-    @hand = 1 if hand_name == 'PAPER'
-    @hand = 2 if (hand_name == 'SCISSOR')
-    hand_str = hand_name
+  def set_hand
+    @hand =  [0,'ROCK'] if @hand[0] == 0 || @hand[1] == 'ROCK'
+    @hand = [1,'PAPER'] if @hand[0] == 1 || @hand[1] == 'PAPER'
+    @hand = [2,'SCISSOR'] if @hand[0] == 2 || @hand[1] == 'SCISSOR'
     @hand
   end
   
@@ -60,11 +59,9 @@ class Player
 # sets @hand and @hand_str.
   
   def ai_random
-    random_hand = Random.new
-    @hand = random_hand.rand(3)
-    @hand_str = 'ROCK' if @hand == 0
-    @hand_str = 'PAPER' if @hand == 1
-    @hand_str = 'SCISSOR' if @hand == 2    
+    random_hand_num = Random.new
+    @hand[0] = random_hand_num.rand(3)
+    set_hand
     @hand
   end
   
@@ -72,7 +69,7 @@ end
 
 # Class: Match
 #
-# Models our canine pals.
+# Represents a game or series of rounds.
 #
 # Attributes:
 # @player1 - Object: Player object, first player
@@ -116,10 +113,10 @@ class Match
   
   def test_round_winner
     winner = nil
-    winner = player1 if (player1.hand > player2.hand)
-    winner = player2 if (player2.hand > player1.hand)
-    winner = player1 if (player1.hand == 0 && player2.hand == 2)
-    winner = player2 if (player2.hand == 0 && player1.hand == 2)
+    winner = player1 if (player1.hand[0] > player2.hand[0])
+    winner = player2 if (player2.hand[0] > player1.hand[0])
+    winner = player1 if (player1.hand[0] == 0 && player2.hand[0] == 2)
+    winner = player2 if (player2.hand[0] == 0 && player1.hand[0] == 2)
     winner = nil if player1.hand == player2.hand
     winner.matchpoints += 1 if winner != nil
     winner
@@ -159,7 +156,7 @@ def driver_ask_bot(pstring)
 end
 
 # Public: #d_whoops
-# reusuable error entry message.
+# reusuable entry error message.
 #
 # Returns:
 # nil
@@ -226,9 +223,9 @@ end
 
 def driver_ask_hand(player)
   puts player.name + ": select your hand! (ROCK, PAPER, OR SCISSOR)"
-  hand = gets.chomp.upcase
-  hand = "SCISSOR" if hand == "SCISSORS"
-  hand
+  player.hand[1] = gets.chomp.upcase
+  player.hand[1] = "SCISSOR" if player.hand[1] == "SCISSORS"
+  player.hand
 end
 
 # Public: #driver_human_set_hand()
@@ -245,12 +242,13 @@ end
 
 def driver_human_set_hand(player)
   h = driver_ask_hand(player)
-  while hand_invalid?(h)
+  while hand_invalid?(h[1])
     d_whoops
     h = driver_ask_hand(player)
   end
-  player.hand_str = h
-  player.hand_str
+  player.hand[1] = h
+  player.set_hand
+  player.hand
 end
 
 # Public: #hand_invalid?()
@@ -289,12 +287,12 @@ def driver
   this_match = Match.new(p1,p2,length)
   d_line
   while this_match.test_match_winner == nil
-    p1.set_hand(driver_human_set_hand(p1)) if p1.control == "HUMAN"
+    driver_human_set_hand(p1) if p1.control == "HUMAN"
     p1.ai_random if p1.control == "COMPUTER"
-    p2.set_hand(driver_human_set_hand(p2)) if p2.control == "HUMAN"
+    driver_human_set_hand(p2) if p2.control == "HUMAN"
     p2.ai_random if p2.control == "COMPUTER"
-    puts p1.name + " plays " + p1.hand_str
-    puts p2.name + " plays " + p2.hand_str
+    puts p1.name + " plays " + p1.hand[1]
+    puts p2.name + " plays " + p2.hand[1]
     this_round = this_match.test_round_winner
     if this_round == nil
       puts "It's a draw!"
@@ -315,6 +313,6 @@ def driver
   
 end
 
-driver
-#binding.pry
+#driver
+binding.pry
 
