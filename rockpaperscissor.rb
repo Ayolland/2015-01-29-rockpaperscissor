@@ -3,7 +3,7 @@ require 'pry'
 class Player
   
   attr_reader :name, :control
-  attr_accessor :hand
+  attr_accessor :hand, :matchpoints
   
   def initialize(name,control)
     @name = name
@@ -11,6 +11,7 @@ class Player
     @wins = 0
     @losses = 0  
     @control = control
+    @matchpoints = 0
   end
   
   def set_hand(hand_name)
@@ -36,22 +37,23 @@ class Match
     @player1 = player1
     @player2 = player2
     @win_at = win_condition
-    @p1points = 0
-    @p2points =0
   end
   
   def test_match_winner
     winner = nil
-    winner = @player1.name if @p1points == @win_at
-    winner = @player2.name if @p2points == @win_at
+    winner = @player1 if @player1.matchpoints == @win_at
+    winner = @player2 if @player2.matchpoints == @win_at
     winner
   end
   
   def test_round_winner
     winner = nil
-    winner = player1 if (player1.hand > player2.hand) || (player1.hand == 0 && player2.hand == 2)
-    winner = player2 if (player2.hand > player1.hand) || (player2.hand == 0 && player1.hand == 2)
+    winner = player1 if (player1.hand > player2.hand)
+    winner = player2 if (player2.hand > player1.hand)
+    winner = player1 if (player1.hand == 0 && player2.hand == 2)
+    winner = player2 if (player2.hand == 0 && player1.hand == 2)
     winner = nil if player1.hand == player2.hand
+    winner.matchpoints += 1 if winner != nil
     winner
   end
   
@@ -155,6 +157,11 @@ def driver
     puts this_round.name + " wins this round!"
   end
   d_line
+  puts p1.name + ": " + p1.matchpoints.to_s
+  puts p2.name + ": " + p2.matchpoints.to_s
+  d_line
+  puts this_match.test_match_winner.name + " wins the match!" if this_match.test_match_winner != nil
+  
   
   
 end
