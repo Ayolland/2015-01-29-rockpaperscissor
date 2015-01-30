@@ -3,26 +3,27 @@ require 'pry'
 class Player
   
   attr_reader :name, :control
+  attr_accessor :hand
   
   def initialize(name,control)
     @name = name
-    @throw = nil
+    @hand = nil
     @wins = 0
     @losses = 0  
     @control = control
   end
   
-  def set_throw(throw_name)
-    @throw = 0 if throw_name == 'ROCK' 
-    @throw = 1 if throw_name == 'PAPER'
-    @throw = 2 if (throw_name == 'SCISSOR')
-    @throw
+  def set_hand(hand_name)
+    @hand = 0 if hand_name == 'ROCK' 
+    @hand = 1 if hand_name == 'PAPER'
+    @hand = 2 if (hand_name == 'SCISSOR')
+    @hand
   end
   
   def ai_random
-    random_throw = Random.new
-    @throw = random_throw.rand(3)
-    @throw
+    random_hand = Random.new
+    @hand = random_hand.rand(3)
+    @hand
   end
   
 end
@@ -39,10 +40,18 @@ class Match
     @p2points =0
   end
   
-  def test_winner
+  def test_match_winner
     winner = nil
     winner = @player1.name if @p1points == @win_at
     winner = @player2.name if @p2points == @win_at
+    winner
+  end
+  
+  def test_round_winner
+    winner = nil
+    winner = player1 if (player1.hand > player2.hand) || (player1.hand == 0 && player2.hand == 2)
+    winner = player2 if (player2.hand > player1.hand) || (player2.hand == 0 && player1.hand == 2)
+    winner = nil if player1.hand == player2.hand
     winner
   end
   
@@ -60,40 +69,63 @@ end
 def driver_ask_bot(pstring)
   puts "Is Player-" + pstring +" a HUMAN or COMPUTER?"
   control = gets.chomp.upcase
-  control = nil if !((control == "HUMAN")||(control == "COMPUTER"))
-  driver_wrong_input(control)
+  control = "COMPUTER" if control == "COMP"
   control
 end
 
-def driver_wrong_input_loop(input_method,input)
-  notnil = input_method(input)
-  while notnil == nil
-    notnil = input_method(input)
-  end
-end
-
-def driver_wrong_input(input)
-    puts "Sorry. One more time:" if input == nil
+def d_whoops
+    puts "Sorry. One more time:"
 end
 
 #uses driver_ask_name and driver_ask_bot to build a new Player object
 
 def driver_build_player(pstring)
   pname = driver_ask_name(pstring)
-  driver_wrong_input_loop(driver_ask_bot,pstring)
+  pbot = driver_ask_bot(pstring)
+  while bot_invalid?(pbot)
+    d_whoops
+    pbot = driver_ask_bot(pstring)
+  end
   Player.new(pname,pbot)
 end
+
+#checks test against only valid inputs for driver_ask_bot
+
+def bot_invalid?(test)
+  test != "HUMAN" && test != "COMPUTER"
+end
+
+#writes 40 dashes
 
 def d_line
   puts "-" * 40
 end
 
-def driver_human_set_throw(player)
-  puts player.name + ": select your throw! (ROCK, PAPER, OR SCISSOR)"
-  throw = gets.chomp.upcase
-  throw = nil if !(((throw == 'ROCK')||(throw == 'PAPER'))||(throw == 'SCISSOR'))
-  driver_wrong_input(throw)
-  throw
+#prompts human players for their hand as a string
+
+def driver_ask_hand(player)
+  puts player.name + ": select your hand! (ROCK, PAPER, OR SCISSOR)"
+  hand = gets.chomp.upcase
+  hand = hand.chomp if hand == "SCISSORS"
+  hand
+end
+
+#sets a human player's hand by prompting anf then checking the input
+
+def driver_human_set_hand(player)
+  h = driver_ask_hand(player)
+  while hand_invalid?(h)
+    d_whoops
+    hand = driver_ask_hand(player)
+  end
+  player.hand = h
+  player.hand
+end
+
+#checks test against only valid inputs for driver_ask_hand
+
+def hand_invalid?(test)
+  test != "ROCK" && test != "PAPER" && test != "SCISSOR"
 end
 
 #main driver, sets up two player objects
@@ -111,7 +143,19 @@ def driver
   puts p1.name + ": " + p1.control + " >VERSUS< " + p2.name + ": " + p2.control
   this_match = Match.new(p1,p2,length)
   d_line
-  p1.set_throw(driver_human_set_throw(p1)) if p1.control == "HUMAN"
+  p1.set_hand(driver_human_set_hand(p1)) if p1.control == "HUMAN"
+  #puts p1.hand
+  p2.set_hand(driver_human_set_hand(p2)) if p2.control == "HUMAN"
+  #puts p2.hand
+  d_line
+  this_round = this_match.test_round_winner
+  if this_round == nil
+    puts "It's a draw!"
+  else
+    puts this_round.name + "wins!"
+  end
+  d_line
+  
   
 end
 
