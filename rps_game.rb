@@ -39,10 +39,14 @@ class Rps_Game
 # State Changes:
 # sets the @ move attribute of the give Player object.
   
-  def set_human_move(player)
-    puts player.name + ", select your move: (ROCK, PAPER, or SCISSOR)"
-    player.move = check_input(["ROCK","PAPER","SCISSOR","SCISSORS"])
-    player.move = "SCISSOR" if player.move == "SCISSORS"
+  def set_move(player)
+    if player.control == "HUMAN"
+      system "clear"
+      puts player.name + ", select your move: (ROCK, PAPER, or SCISSOR)"
+      player.move = check_input(["ROCK","PAPER","SCISSOR","SCISSORS"])
+      player.move = "SCISSOR" if player.move == "SCISSORS"
+    end
+    player.move = random_rps if player.control == "COMPUTER"
     nil
   end
   
@@ -57,12 +61,10 @@ class Rps_Game
   
   def run_round
     system "clear"
-    set_human_move(p1) if @p1.control == "HUMAN"
-    p1.move = random_rps if @p1.control == "COMPUTER"
+    set_move(p1)
+    set_move(p2)
+    #binding.pry
     system "clear"
-    set_human_move(p2) if @p2.control == "HUMAN"
-    p2.move = random_rps if @p2.control == "COMPUTER"
-    h_line
     winner = nil
     @round += 1
     puts "Round " + @round.to_s 

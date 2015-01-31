@@ -12,9 +12,23 @@ class Player
   attr_reader :name, :control
   attr_accessor :score, :move
 
-  def initialize(name,control)
+  def initialize(name)
     @name = name
-    @control = control
+    @control = "HUMAN"
+    @score = 0
+    @move = nil
+  end
+  
+end
+  
+class Ai_Player
+
+  attr_reader :name, :control
+  attr_accessor :score, :move
+ 
+  def initialize(name)
+    @name = name
+    @control = "COMPUTER"
     @score = 0
     @move = nil
   end

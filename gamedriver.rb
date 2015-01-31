@@ -48,8 +48,9 @@ def create_player(num)
   puts "Is Player" + n + " a HUMAN or a COMPUTER?"
   valid = ["HUMAN","COMPUTER","COMP"]
   control = check_input(valid)
-  control = "COMPUTER" if control == "COMP"
-  Player.new(name,control)
+  p = Ai_Player.new(name) if control == "COMPUTER" || control == "COMP"
+  p = Player.new(name) if control == "HUMAN"
+  p
 end
 
 # Public: pause
@@ -90,4 +91,5 @@ def play_rps
   this_game.run_game
 end
 
-binding.pry
+#binding.pry
+play_rps
