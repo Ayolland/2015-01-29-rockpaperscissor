@@ -27,29 +27,6 @@ class Rps_Game
     @round = 0
   end
   
-# Public: set_human_move
-# Uses #check_input to set a valid move for the player.
-#
-# Parameters:
-# player - Player: the player whose move is being set
-#
-# Returns:
-# nil
-# 
-# State Changes:
-# sets the @ move attribute of the give Player object.
-  
-  def set_move(player)
-    if player.control == "HUMAN"
-      system "clear"
-      puts player.name + ", select your move: (ROCK, PAPER, or SCISSOR)"
-      player.move = check_input(["ROCK","PAPER","SCISSOR","SCISSORS"])
-      player.move = "SCISSOR" if player.move == "SCISSORS"
-    end
-    player.move = random_rps if player.control == "COMPUTER"
-    nil
-  end
-  
 # Public: run_round
 # Runs the current round, determines a winner, adds to Player @scores
 #
@@ -61,8 +38,8 @@ class Rps_Game
   
   def run_round
     system "clear"
-    set_move(p1)
-    set_move(p2)
+    p1.set_move
+    p2.set_move
     #binding.pry
     system "clear"
     winner = nil
@@ -99,17 +76,6 @@ class Rps_Game
     @winner = @p2 if @p2.score == @length
     puts @winner.name + " wins the game! Congratultions!"
     @winner
-  end
-  
-# Public: random_rps
-# Returns a random move
-#
-# Returns:
-# String: Either "ROCK", "PAPER", or "SCISSOR" chosen randomly.
-
-  
-  def random_rps
-    ["ROCK","PAPER","SCISSOR"].sample
   end
 
 end
