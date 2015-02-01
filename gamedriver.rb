@@ -77,11 +77,11 @@ def play_game
   puts "Would you like to play"
   puts "Rock-Paper-Scissor (RPS)" 
   puts "OR" 
-  puts "Rock-Paper-Scissor-Lizard-Spock?"
+  puts "Rock-Paper-Scissor-Lizard-Spock? (RPSLS)"
   h_line
   rule_type = check_input(["RPS","RPSLS"])
   rules = rule_type == "RPS" ? RPS_Rules.new : RPSLS_Rules.new
-  puts "Ok! Let's play!"
+  puts "Ok! Let's play " + rules.prompt + "!"
   h_line
   p1 = create_player(1,rules)
   p2 = create_player(2,rules)

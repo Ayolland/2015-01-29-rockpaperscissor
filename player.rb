@@ -47,7 +47,7 @@ class Player
   
   def set_move
     system "clear"
-    puts @name + ", select your move: (ROCK, PAPER, or SCISSOR)"
+    puts @name + ", select your move: (" + rules.prompt.upcase + ")"
     @move = check_input(@rules.valid)
     @move = "SCISSOR" if @move == "SCISSORS"
     @move = @rules.random_move if @move == "RANDOM"
@@ -95,7 +95,6 @@ class Ai_Player
 # sets the @ move attribute of the give Player object.
   
   def set_move
-    binding.pry
     their_move = @last_round[0]
     my_move = @last_round[1]
     if @last_round = [] || @last_round[2] == nil || [true,false].sample
