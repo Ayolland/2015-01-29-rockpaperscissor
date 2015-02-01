@@ -1,12 +1,4 @@
-# Public: random_rps
-# Returns a random move
-#
-# Returns:
-# String: Either "ROCK", "PAPER", or "SCISSOR" chosen randomly.
 
-def random_rps
-  ["ROCK","PAPER","SCISSOR"].sample
-end
 
 # Class: Player
 # This class hold relevant stats for players in the game.
@@ -23,14 +15,15 @@ end
 
 class Player
 
-  attr_reader :name, :control
+  attr_reader :name, :control, :rules
   attr_accessor :score, :move
 
-  def initialize(name)
+  def initialize(name,rules)
     @name = name
     @control = "HUMAN"
     @score = 0
     @move = nil
+    @rules = rules
   end
   
 # Public: save_round
@@ -55,9 +48,9 @@ class Player
   def set_move
     system "clear"
     puts @name + ", select your move: (ROCK, PAPER, or SCISSOR)"
-    @move = check_input(["ROCK","PAPER","SCISSOR","SCISSORS","RANDOM"])
+    @move = check_input(@rules.valid)
     @move = "SCISSOR" if @move == "SCISSORS"
-    @move = random_rps if @move == "RANDOM"
+    @move = @rules.random_move if @move == "RANDOM"
     @move
   end
   
@@ -83,13 +76,13 @@ class Ai_Player
   attr_reader :name, :control, :last_round, :rules
   attr_accessor :score, :move
  
-  def initialize(name)
+  def initialize(name,rules)
     @name = name
     @control = "COMPUTER"
     @score = 0
     @move = nil
     @last_round =[]
-    @rules = {"ROCK" => ["SCISSOR", "PAPER"] , "PAPER" => ["ROCK", "SCISSOR",], "SCISSOR" => ["PAPER", "ROCK"]}
+    @rules = rules
   end
 
 # Public: set_move
@@ -102,16 +95,23 @@ class Ai_Player
 # sets the @ move attribute of the give Player object.
   
   def set_move
+    binding.pry
     their_move = @last_round[0]
     my_move = @last_round[1]
     if @last_round = [] || @last_round[2] == nil || [true,false].sample
-      @move = random_rps
+      @move = @rules.random_move
     elsif won_last_round?
-        @move = @rules[my_move].sample
-    else !won_last_round?
-        @move = @rules[their_move].sample
+      @move = find_what_beats(my_hand).sample
+    else !won_last_round? 
+      @move = find_what_beats(their_hand).sample
     end
     @move
+  end
+  
+  def find_what_beats(this_hand)
+    choices = []
+    @rules.beats.each_key {|key| choices.push(key) if @rules.beats[key].include?(this_hand)}
+    choices
   end
   
 # Public: save_round

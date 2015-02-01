@@ -1,6 +1,7 @@
 require 'pry'
 require_relative 'rps_game'
 require_relative 'player'
+require_relative 'rules'
 
 # Public: h_line
 # Prints 50 dashes
@@ -41,15 +42,15 @@ def check_input(valid_inputs)
 # Returns:
 # Player: a new player object.
 
-def create_player(num)
+def create_player(num, rules)
   n =num.to_s
   puts "Enter a name for Player " + n + ":"
   name = gets.chomp
   puts "Is Player" + n + " a HUMAN or a COMPUTER?"
   valid = ["HUMAN","COMPUTER","COMP"]
   control = check_input(valid)
-  p = Ai_Player.new(name) if control == "COMPUTER" || control == "COMP"
-  p = Player.new(name) if control == "HUMAN"
+  p = Ai_Player.new(name,rules) if control == "COMPUTER" || control == "COMP"
+  p = Player.new(name,rules) if control == "HUMAN"
   p
 end
 
@@ -72,16 +73,23 @@ end
 # Returns:
 # Player: the winning player.
 
-def play_rps
-  puts "Ok! Let's play Rock-Paper-Scissors."
+def play_game
+  puts "Would you like to play"
+  puts "Rock-Paper-Scissor (RPS)" 
+  puts "OR" 
+  puts "Rock-Paper-Scissor-Lizard-Spock?"
   h_line
-  p1 = create_player(1)
-  p2 = create_player(2)
+  rule_type = check_input(["RPS","RPSLS"])
+  rules = rule_type == "RPS" ? RPS_Rules.new : RPSLS_Rules.new
+  puts "Ok! Let's play!"
+  h_line
+  p1 = create_player(1,rules)
+  p2 = create_player(2,rules)
   h_line
   puts "Great. How many points are you playing to? (1-5)"
   valid = ["1","2","3","4","5"]
   length = check_input(valid).to_i
-  this_game = Rps_Game.new(p1,p2,length)
+  this_game = Rps_Game.new(p1,p2,length,rules)
   h_line
   puts "Ok!"
   puts ""
@@ -92,4 +100,4 @@ def play_rps
 end
 
 #binding.pry
-play_rps
+play_game
