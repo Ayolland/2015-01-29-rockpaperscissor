@@ -60,7 +60,7 @@ end
 # nil
 
 def pause
-  puts "press any key to continue"
+  puts "press ENTER to cotinue"
   h_line 
   gets
   nil

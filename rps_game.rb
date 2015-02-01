@@ -17,7 +17,7 @@
 
 class Rps_Game
 
-  attr_reader :p1, :p2, :length
+  attr_reader :p1, :p2, :length, :rules
 
   def initialize(player1,player2,length)
     @p1 = player1
@@ -25,6 +25,8 @@ class Rps_Game
     @length = length
     @winner = nil
     @round = 0
+    
+    @rules ={"ROCK" => ["SCISSOR", "crushes"] , "PAPER" => ["ROCK", "covers"], "SCISSOR" => ["PAPER", "cuts"]}
   end
   
 # Public: run_round
@@ -40,22 +42,31 @@ class Rps_Game
     system "clear"
     p1.set_move
     p2.set_move
-    #binding.pry
     system "clear"
     winner = nil
     @round += 1
     puts "Round " + @round.to_s 
     puts p1.name + " plays " + p1.move + "."
     puts p2.name + " plays " + p2.move + "."
-    winner = p1 if (p1.move == "ROCK" && p2.move == "SCISSOR")||(p1.move == "SCISSOR" && p2.move == "PAPER")||(p1.move == "PAPER" && p2.move == "ROCK")
-    winner = p2 if (p2.move == "ROCK" && p1.move == "SCISSOR")||(p2.move == "SCISSOR" && p1.move == "PAPER")||(p2.move == "PAPER" && p1.move == "ROCK")
+    winner = p1 if @rules[p1.move][0] == p2.move
+    winner = p2 if @rules[p2.move][0] == p1.move
+    
     puts " "
-    puts (winner != nil ? winner.name + " wins the round!" : "It's a draw.")
+    if winner != nil
+      puts winner.move + " " + @rules[winner.move][1] + " " + @rules[winner.move][0]
+      puts winner.name + " wins the round!"
+    else
+      puts "It's a draw."
+    end
     winner.score += 1 if winner != nil
     h_line
+    p1.save_round(p1.move,p2.move,winner)
+    p2.save_round(p2.move,p1.move,winner)
     puts p1.name + ": " + p1.score.to_s
     puts p2.name + ": " + p2.score.to_s
+    #binding.pry
     pause
+    
     nil
   end
   
@@ -74,7 +85,8 @@ class Rps_Game
     end
     @winner = @p1 if @p1.score == @length
     @winner = @p2 if @p2.score == @length
-    puts @winner.name + " wins the game! Congratultions!"
+    puts @winner.name + " wins the game!"
+    puts "Congratultions!" if @winner.control == "HUMAN"
     @winner
   end
 
