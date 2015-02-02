@@ -107,6 +107,18 @@ class Ai_Player
     @move
   end
   
+# Public: find_what_beats
+# Uses @rules.beats to determine what hand(s) will beat the hand given as a parameter
+#
+# Parameters:
+# this_hand - String: a valid RPS or RPSLS move
+#
+# Returns:
+# Array: an array of moves that beat the inputed hand.
+# 
+# State Changes:
+# sets the @ move attribute of the give Player object.
+  
   def find_what_beats(this_hand)
     choices = []
     @rules.beats.each_key {|key| choices.push(key) if @rules.beats[key].include?(this_hand)}
