@@ -97,7 +97,7 @@ class Ai_Player
   def set_move
     their_move = @last_round[0]
     my_move = @last_round[1]
-    if @last_round = [] || @last_round[2] == nil || [true,false].sample
+    if @last_round = [] || @last_round[2] == nil || [false,true,false].sample
       @move = @rules.random_move
     elsif won_last_round?
       @move = find_what_beats(my_hand).sample
