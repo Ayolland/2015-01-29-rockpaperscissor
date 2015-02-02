@@ -1,6 +1,6 @@
 # Class: Rps_game
 #
-# This class represents a multi-round Rock/Paper/Scissors match.
+# This class represents a multi-round RPS or RPSLS match.
 #
 # Attributes:
 # @p1     - Player: player 1
@@ -15,7 +15,7 @@
 # #run_game
 # #random_rps
 
-class Rps_Game
+class Game
 
   attr_reader :p1, :p2, :length, :rules
 

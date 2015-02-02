@@ -68,7 +68,7 @@ def pause
 end
 
 # Public: play_rps
-# Launches a new Rock/Paper/Scissor game
+# Launches a new RPS or RPSLS game
 #
 # Returns:
 # Player: the winning player.
@@ -89,11 +89,11 @@ def play_game
   puts "Great. How many points are you playing to? (1-5)"
   valid = ["1","2","3","4","5"]
   length = check_input(valid).to_i
-  this_game = Rps_Game.new(p1,p2,length,rules)
+  this_game = Game.new(p1,p2,length,rules)
   h_line
   puts "Ok!"
-  puts ""
-  puts this_game.p1.control + ":" +this_game.p1.name + "> VERSUS <" + this_game.p2.name + ":" + this_game.p2.control
+  puts rules.prompt + ":"
+  puts this_game.p1.control + ":" +this_game.p1.name + " > VERSUS < " + this_game.p2.name + ":" + this_game.p2.control
   puts "First to " + length.to_s + " points wins!"
   pause
   this_game.run_game
